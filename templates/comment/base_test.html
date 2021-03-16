@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Base Test</title>
+</head>
+<body>
+{% for num in nums[:5] %}
+    <p>{{ num }}</p>
+{% endfor %}
+
+
+{% for num in nums[20:] %}
+    <p>{{ num }}</p>
+{% endfor %}
+</body>
+</html>

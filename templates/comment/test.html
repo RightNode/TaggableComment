@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+</head>
+<body>
+<h3>index测试</h3>
+<form action="{{ url_for("comment.index") }}" method="get">
+    直接获取主页:
+    <button type="submit">Submit</button>
+</form>
+
+<form action="{{ url_for("comment.index") }}" method="post">
+    根据筛选条件获取主页:
+    <button type="submit">Submit</button>
+</form>
+
+<h3>new_comment测试</h3>
+<form action="{{ url_for("comment.new_comment") }}" method="post">
+    content: <input type="text" name="cmt_content">
+    parent_id: <input type="text" name="cmt_parent_id">
+    <button type="submit">Submit</button>
+</form>
+
+<h3>thumb_up_action测试</h3>
+<form action="{{ url_for("comment.thumb_up_action") }}" method="post">
+    cmt_id: <input type="text" name="cmt_id">
+    <button type="submit">Submit</button>
+</form>
+
+<h3>thumb_down_action测试</h3>
+<form action="{{ url_for("comment.thumb_down_action") }}" method="post">
+    cmt_id: <input type="text" name="cmt_id">
+    <button type="submit">Submit</button>
+</form>
+
+<h3>tag_mark测试</h3>
+<form action="{{ url_for("comment.tag_mark") }}" method="post">
+    cmt_id: <input type="text" name="cmt_id">
+    tag_name: <input type="text" name="tag_name">
+    <button type="submit">Submit</button>
+</form>
+
+<h3>tag_agree测试</h3>
+<form action="{{ url_for("comment.tag_agree") }}" method="post">
+    cmt_tag_id: <input type="text" name="cmt_tag_id">
+    <button type="submit">Submit</button>
+</form>
+
+
+</body>
+</html>

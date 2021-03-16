@@ -1,0 +1,163 @@
+body {
+    margin-top: 20px;
+}
+
+.content-item {
+    padding: 30px 0;
+    background-color: #FFFFFF;
+}
+
+.content-item h2 {
+    font-weight: 700;
+    font-size: 35px;
+    line-height: 45px;
+    text-transform: uppercase;
+    margin: 20px 0;
+}
+
+.content-item h3 {
+    font-weight: 400;
+    font-size: 20px;
+    color: #555555;
+    margin: 10px 0 15px;
+    padding: 0;
+}
+
+.content-headline h2 {
+    background-color: #FFFFFF;
+    display: inline-block;
+    margin: -20px auto 0;
+    padding: 0 20px;
+}
+
+.grey .content-headline h2 {
+    background-color: #F0F0F0;
+}
+
+.content-headline h3 {
+    font-size: 14px;
+    color: #AAAAAA;
+    display: block;
+}
+
+#top-btn {
+    margin-top: 7px;
+}
+
+#user-comment {
+    height: 100px;
+}
+
+.ctl-row {
+    margin-top: 25px;
+}
+
+#comments .media {
+    /*border-top: 1px dashed #DDDDDD;*/
+    padding: 5px 0;
+    clear: both;
+    margin-top: 0;
+}
+
+#comments .media h4 {
+    margin: 0 0 10px;
+}
+
+#comments .media p {
+    text-align: justify;
+}
+
+.media img {
+    width: 50px;
+}
+
+.reply-wrap {
+    clear: both;
+    margin-top: 10px;
+}
+
+table {
+    width: 100%;
+}
+
+.comment-ctl-table {
+    color: #AAAAAA;
+    font-size: 12px;
+    font-weight: 600;
+    table-layout: fixed;
+}
+
+.comment-ctl-table i {
+    color: #666666;
+    margin-right: 5px;
+}
+
+.comment-ctl-table td {
+    vertical-align: top;
+    padding: 0;
+}
+
+.comment-ctl-table .td-calendar {
+    width: 150px;
+}
+
+.comment-ctl-table .td-thumbs {
+    width: 100px;
+    max-width: 150px;
+}
+
+.comment-ctl-table .td-thumbs .fa-thumbs-down {
+    margin-left: 20px;
+}
+
+.comment-ctl-table .td-reply {
+    width: 60px;
+    text-align: right;
+}
+
+.panel-group {
+    margin-bottom: 0;
+}
+
+.panel-group .panel-default {
+    border: 0;
+}
+
+.panel-group .panel-heading {
+    padding: 0;
+    background-color: #fff;
+}
+
+.panel-group .panel-footer {
+    background-color: #fff;
+}
+
+.div-stamp .btn {
+    margin-right: 3px;
+}
+
+.inner-stamp-list,
+.inner-stamp-selectpicker {
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+.outter-stamp-list div span,
+.inner-stamp-list div span {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.outter-stamp-list div span label,
+.inner-stamp-list div span label {
+    border-left: 2px solid;
+    margin-bottom: 0;
+    margin-left: 5px;
+    padding-left: 5px;
+}
+
+.fa-thumbs-up,
+.fa-thumbs-down,
+.fa-stamp {
+    cursor: pointer;
+}

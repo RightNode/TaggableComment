@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>评论系统</title>
+
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.2/css/all.min.css" rel="stylesheet">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta/dist/css/bootstrap-select.min.css">
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta/dist/js/bootstrap-select.min.js"></script>
+    <!-- (Optional) Latest compiled and minified JavaScript translation files -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta/dist/js/i18n/defaults-zh_CN.min.js"></script>
+
+    <!--My css and js-->
+    <link rel="stylesheet" href="../../static/css/index.css">
+    <script src="../../static/js/index.js"></script>
+</head>
+<body>
+<div class="content-item" id="comments">
+    <div class="container">
+
+        <!--New Comment-->
+        <div class="row new-comment-row">
+            <div class="col-md-offset-1 col-md-10">
+                <form action="{{ url_for("comment.new_comment") }}" method="post">
+                    <h3 class="pull-left">你的评论</h3>
+                    <button type="submit" class="btn btn-normal pull-right" id="top-btn">提交</button>
+                    <table class="new-comment-table">
+                        <tr>
+                            <td width="105px">
+                                <img class="img-responsive" src="../../static/avatar/{{ user_id }}.png" alt="" width="100px">
+                            </td>
+                            <td>
+                                <textarea class="form-control" id="user-comment" name="cmt_content" placeholder="请输入你的评论" maxlength="1000"
+                                          required></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <!--控制拦-->
+        <div class="row ctl-row">
+            <div class="col-md-offset-1 col-md-10">
+                <form action="/" method="post" class="ctl-form">
+                </form>
+                <table class="top-ctl-table">
+                    <tr>
+                        <td>
+                            <h3>{{ cmts|length }}条评论</h3>
+                        </td>
+                        <td class="form-inline" style="width:150px;text-align: right;">
+                            评论排序：
+                            <select class="form-control input-sm commets-sort-select">
+                                <option value="time-desc" {% if sorted_by == "time-desc" %} selected="selected" {% endif %}>最近</option>
+                                <option value="time-asc" {% if sorted_by == "time-asc" %} selected="selected" {% endif %}>最早</option>
+                                <option value="thumb-up" {% if sorted_by == "thumb-up" %} selected="selected" {% endif %}>高赞</option>
+                                <option value="thumb-down" {% if sorted_by == "thumb-down" %} selected="selected" {% endif %}>高踩</option>
+                            </select>
+                        </td>
+                        <td class="form-inline" style="width:500px;text-align: right;">
+                            过滤以下标签：
+                            <select class="selectpicker" multiple data-live-search="true" data-actions-box="true" data-container="body"
+                                    style="width:300px;">
+                                {% if filter_tag_ids %}
+                                    {% for tag in all_tags_in_atl %}
+                                        <option data-content="<span class='badge badge-success'>{{ tag.tag_name }}</span>" value="{{ tag.id }}"
+                                                {% if tag.id in filter_tag_ids %}
+                                                selected="selected" {% endif %}>{{ tag.tag_name }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    {% for tag in all_tags_in_atl %}
+                                        <option data-content="<span class='badge badge-success'>{{ tag.tag_name }}</span>"
+                                                value="{{ tag.id }}">{{ tag.tag_name }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!--评论栏-->
+        <div class="row cmt-list-row">
+            <div class="col-md-offset-1 col-md-10">
+
+                {% for cmt in cmts %}
+                    <div class="media comment">
+                        <div class="media-left">
+                            <img class="media-object" src="../../static/avatar/{{ cmt.user_id }}.png">
+                        </div>
+                        <div class="media-body">
+                            <h4 class="media-heading">{{ cmt.user.username }}</h4>
+
+                            <p>{{ cmt.content }}</p>
+
+                            <table class="comment-ctl-table">
+                                <tr>
+                                    <td valign="top" class="td-calendar">
+                                        <i class="far fa-calendar"></i>{{ cmt.created_at }}
+                                    </td>
+                                    <td valign="top" class="td-thumbs">
+                                        <i {% if cmt.id in user_tu_rec %} class="fas fa-thumbs-up" {% else %} class="far fa-thumbs-up" {% endif %}
+                                                                          data-cmt-id="{{ cmt.id }}"></i><label>{{ cmt.thumb_up }}</label>
+                                        <i {% if cmt.id in user_td_rec %} class="fas fa-thumbs-down" {% else %} class="far fa-thumbs-down" {% endif %}
+                                                                          data-cmt-id="{{ cmt.id }}"></i><label>{{ cmt.thumb_down }}</label>
+                                    </td>
+                                    <td valign="top" class="td-stamp">
+                                        <div class="div-stamp">
+                                            <!--在外显示标签的div-->
+                                            <div class="outter-stamp-list">
+                                                <i class="fas fa-stamp" data-toggle="collapse" href="#stamp-collapse-{{ cmt.id }}"></i>
+                                                <div class="btn-group btn-group-xs" role="group" aria-label="...">
+                                                    {% for comment_tag in cmt.comment_tags[:5] %}
+                                                        <span class="label label-info tag-span"
+                                                              data-cmt-tag-id="{{ comment_tag.id }}"
+                                                                {% if (cmt.id, comment_tag.tag_id) in user_tag_rec %}
+                                                              data-marked="true" style="color:#A569BD;" {% else %}
+                                                              data-marked="false" {% endif %}>{{ comment_tag.tag.tag_name }}<label>{{ comment_tag.num }}</label></span>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+
+                                            <div id="stamp-collapse-{{ cmt.id }}" class="collapse">
+                                                <!--在内显示标签的div-->
+                                                {% if cmt.comment_tags | length > 5 %}
+                                                    <div class="inner-stamp-list">
+                                                        <div class="btn-group btn-group-xs" role="group" aria-label="...">
+                                                            {% for comment_tag in cmt.comment_tags[5:] %}
+                                                                <span class="label label-info tag-span"
+                                                                      data-cmt-tag-id="{{ comment_tag.id }}"
+                                                                        {% if (cmt.id, comment_tag.tag_id) in user_tag_rec %}
+                                                                      data-marked="true" style="color:#A569BD;" {% else %}
+                                                                      data-marked="false" {% endif %}>{{ comment_tag.tag.tag_name }}<label>{{ comment_tag.num }}</label></span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                <!--标签搜索的div-->
+                                                <div class="inner-stamp-selectpicker">
+                                                    <form action="{{ url_for("comment.tag_mark") }}" method="post">
+                                                        <div class="input-group">
+                                                            <input type="hidden" name="cmt_id" value="{{ cmt.id }}">
+                                                            <input type="text" class="form-control" name="tag_name" placeholder="请输入你要打上的标签"
+                                                                   required maxlength="20">
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-default" type="submit">打标签</button>
+                                                            </span>
+                                                        </div>
+                                                    </form>
+                                                    <ul class="dropdown-menu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                    <td valign="top" class="td-reply">
+                                        <a class="cmt-reply" data-toggle="collapse" href="#reply-wrap-collapse-{{ cmt.id }}">回复</a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="reply-wrap collapse" id="reply-wrap-collapse-{{ cmt.id }}">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <form action="{{ url_for("comment.new_comment") }}" method="post">
+                                            <div class="input-group">
+                                                <input type="text" name="cmt_content" class="form-control" placeholder="@{{ cmt.user.username }} "
+                                                       value="@{{ cmt.user.username }} " required maxlength="1000">
+                                                <input type="hidden" name="cmt_parent_id" value="{{ cmt.id }}">
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-default reply-btn" type="submit">回复</button>
+                                                </span>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- reply list-->
+                            {% for reply in cmt.replies %}
+                                <div class="media reply">
+                                    <div class="media-left">
+                                        <a href="#">
+                                            <img class="media-object" src="../../static/avatar/{{ reply.user_id }}.png">
+                                        </a>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="media-heading">{{ reply.user.username }}</h4>
+
+                                        <p>{{ reply.content }}</p>
+
+                                        <table class="comment-ctl-table">
+                                            <tr>
+                                                <td valign="top" class="td-calendar">
+                                                    <i class="far fa-calendar"></i>{{ reply.created_at }}
+                                                </td>
+                                                <td valign="top" class="td-thumbs">
+                                                    <i {% if reply.id in user_tu_rec %} class="fas fa-thumbs-up" {% else %}
+                                                                                        class="far fa-thumbs-up" {% endif %}
+                                                                                        data-cmt-id="{{ reply.id }}"></i><label>{{ reply.thumb_up }}</label>
+                                                    <i {% if reply.id in user_td_rec %} class="fas fa-thumbs-down" {% else %}
+                                                                                        class="far fa-thumbs-down" {% endif %}
+                                                                                        data-cmt-id="{{ reply.id }}"></i><label>{{ reply.thumb_down }}</label>
+                                                </td>
+                                                <td valign="top" class="td-stamp">
+                                                    <div class="div-stamp">
+                                                        <!--在外显示标签的div-->
+                                                        <div class="outter-stamp-list">
+                                                            <a data-toggle="collapse" href="#stamp-collapse-{{ reply.id }}">
+                                                                <i class="fas fa-stamp"></i>
+                                                            </a>
+                                                            <div class="btn-group btn-group-xs" role="group" aria-label="...">
+                                                                {% for comment_tag in reply.comment_tags[:5] %}
+                                                                    <span class="label label-info tag-span"
+                                                                          data-cmt-tag-id="{{ comment_tag.id }}"
+                                                                            {% if (reply.id, comment_tag.tag_id) in user_tag_rec %}
+                                                                          data-marked="true" style="color:#A569BD;" {% else %}
+                                                                          data-marked="false" {% endif %}>{{ comment_tag.tag.tag_name }}<label>{{ comment_tag.num }}</label></span>
+                                                                {% endfor %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div id="stamp-collapse-{{ reply.id }}" class="collapse">
+                                                            <!--在内显示标签的div-->
+                                                            {% if reply.comment_tags | length > 5 %}
+                                                                <div class="inner-stamp-list">
+                                                                    <div class="btn-group btn-group-xs" role="group" aria-label="...">
+                                                                        {% for comment_tag in reply.comment_tags[5:] %}
+                                                                            <span class="label label-info tag-span"
+                                                                                  data-cmt-tag-id="{{ comment_tag.id }}"
+                                                                                    {% if (reply.id, comment_tag.tag_id) in user_tag_rec %}
+                                                                                  data-marked="true" style="color:#A569BD;" {% else %}
+                                                                                  data-marked="false" {% endif %}>{{ comment_tag.tag.tag_name }}<label>{{ comment_tag.num }}</label></span>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                            {% endif %}
+                                                            <!--标签搜索的div-->
+                                                            <div class="inner-stamp-selectpicker">
+                                                                <form action="{{ url_for("comment.tag_mark") }}" method="post">
+                                                                    <div class="input-group">
+                                                                        <input type="hidden" name="cmt_id" value="{{ reply.id }}">
+                                                                        <input type="text" class="form-control" name="tag_name"
+                                                                               placeholder="请输入你要打上的标签" required maxlength="20">
+                                                                        <span class="input-group-btn">
+                                                                            <button class="btn btn-default" type="submit">打标签</button>
+                                                                        </span>
+                                                                    </div>
+                                                                </form>
+                                                                <ul class="dropdown-menu"></ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </td>
+                                                <td valign="top" class="td-reply">
+                                                    <a class="cmt-reply" data-toggle="collapse" href="#reply-wrap-collapse-{{ reply.id }}">回复</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                        <div class="reply-wrap collapse" id="reply-wrap-collapse-{{ reply.id }}">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <form action="{{ url_for("comment.new_comment") }}" method="post" id="cmt-form">
+                                                        <div class="input-group">
+                                                            <input type="text" name="cmt_content" class="form-control"
+                                                                   placeholder="@{{ reply.user.username }} " value="@{{ reply.user.username }} "
+                                                                   required maxlength="1000">
+                                                            <input type="hidden" name="cmt_parent_id" value="{{ cmt.id }}">
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-default reply-btn" type="submit">回复</button>
+                                                            </span>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %} <!-- end for reply list -->
+
+                        </div>
+                    </div>
+                {% endfor %} <!-- end for comment list -->
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
