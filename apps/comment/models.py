@@ -41,6 +41,7 @@ class Comment(db.Model):
     user_id = db.Column(db.ForeignKey('user.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
     parent_id = db.Column(db.ForeignKey('comment.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
 
+    # Article对象可以通过comments属性来获取相应的Comment对象列表
     article = db.relationship('Article', primaryjoin='Comment.article_id == Article.id', backref='comments')
     # parent = db.relationship('Comment', remote_side=[id], primaryjoin='Comment.parent_id == Comment.id',
     #                          backref=db.backref('replies', order_by=-created_at))
@@ -64,6 +65,23 @@ class Comment(db.Model):
             self.parent_id = parent_id
         elif parent_id is None and parent is not None:
             self.parent = parent
+
+
+class UserFilterTag(db.Model):
+    __tablename__ = 'user_filter_tag'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.ForeignKey('user.id'), nullable=False, unique=True)
+    tag_ids = db.Column(db.String(200), nullable=False)
+
+    user = db.relationship('User', primaryjoin='UserFilterTag.user_id == User.id', backref='user_filter_tags')
+
+    def __init__(self, user_id, id_list):
+        self.user_id = user_id
+        self.tag_ids = ",".join([str(a) for a in sorted(set(id_list))])
+
+    def get_id_list(self):
+        return [int(a) for a in self.tag_ids.split(",")]
 
 
 class CommentTag(db.Model):

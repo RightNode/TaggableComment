@@ -100,6 +100,7 @@ def new_comment():
             cmt = Comment(content=content, parent_id=parent_id, user_id=user_id, article_id=article_id)
             db.session.add(cmt)
             # TODO: 这里还差一个给评论自动生成标签的过程
+            # 直接调用函数或有问题，或许只能直接写成if判断
             db.session.commit()
 
     return redirect(url_for("comment.index"))
